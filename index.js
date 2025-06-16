@@ -68,7 +68,24 @@ function gerarFaturaStr (fatura, pecas) {
   return faturaStr;
 }
 
+function gerarFaturaHTML (fatura, pecas) {
+  return [
+    `<html>`,
+    `<p> Fatura UFMG </p>`,
+    `<ul>`,
+    ...[...fatura.apresentacoes].map(apre => {
+      return `<li>  ${(getPeca(pecas, apre)).nome}: ${formatarMoeda(calcularTotalApresentacao(pecas, apre)/100)} (${apre.audiencia} assentos) </li>`;
+    }),
+    `</ul>`,
+    `<p> Valor total: ${formatarMoeda(calcularTotalFatura(pecas, fatura)/100)} </p>`,
+    `<p> Créditos acumulados: ${calcularTotalCreditos(pecas, fatura)} </p>`,
+    `</html>`,
+  ].join('\n')
+}
+
 const faturas = JSON.parse(readFileSync('./faturas.json'));
 const pecas = JSON.parse(readFileSync('./pecas.json'));
 const faturaStr = gerarFaturaStr(faturas, pecas);
 console.log(faturaStr);
+const faturaHTML = gerarFaturaHTML(faturas, pecas);
+console.log(faturaHTML);
